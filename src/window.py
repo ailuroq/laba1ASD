@@ -50,22 +50,22 @@ class Ui_MainWindow(object):
         self.textEdit.setGeometry(QtCore.QRect(0, 230, 519, 91))
         self.textEdit.setObjectName("textEdit")
         self.pushButton_3 = QtWidgets.QPushButton(self.insert)
-        self.pushButton_3.setGeometry(QtCore.QRect(0, 360, 521, 31))
+        self.pushButton_3.setGeometry(QtCore.QRect(0, 360, 251, 31))
         self.pushButton_3.setObjectName("pushButton_3")
         self.tableWidget_2 = QtWidgets.QTableWidget(self.insert)
         self.tableWidget_2.setGeometry(QtCore.QRect(0, 400, 519, 211))
         self.tableWidget_2.setObjectName("tableWidget_2")
         self.tableWidget_2.setColumnCount(0)
         self.tableWidget_2.setRowCount(0)
+        self.pushButton_9 = QtWidgets.QPushButton(self.insert)
+        self.pushButton_9.setGeometry(QtCore.QRect(270, 360, 251, 31))
+        self.pushButton_9.setObjectName("pushButton_9")
         self.tabWidget.addTab(self.insert, "")
         self.shell = QtWidgets.QWidget()
         self.shell.setObjectName("shell")
         self.lineEdit = QtWidgets.QLineEdit(self.shell)
         self.lineEdit.setGeometry(QtCore.QRect(0, 330, 521, 22))
         self.lineEdit.setObjectName("lineEdit")
-        self.pushButton_4 = QtWidgets.QPushButton(self.shell)
-        self.pushButton_4.setGeometry(QtCore.QRect(0, 360, 521, 31))
-        self.pushButton_4.setObjectName("pushButton_4")
         self.tableWidget_4 = QtWidgets.QTableWidget(self.shell)
         self.tableWidget_4.setGeometry(QtCore.QRect(0, 400, 519, 211))
         self.tableWidget_4.setObjectName("tableWidget_4")
@@ -85,6 +85,12 @@ class Ui_MainWindow(object):
         self.textEdit_3 = QtWidgets.QTextEdit(self.shell)
         self.textEdit_3.setGeometry(QtCore.QRect(0, 229, 519, 91))
         self.textEdit_3.setObjectName("textEdit_3")
+        self.pushButton_7 = QtWidgets.QPushButton(self.shell)
+        self.pushButton_7.setGeometry(QtCore.QRect(0, 360, 261, 31))
+        self.pushButton_7.setObjectName("pushButton_7")
+        self.pushButton_10 = QtWidgets.QPushButton(self.shell)
+        self.pushButton_10.setGeometry(QtCore.QRect(270, 360, 251, 31))
+        self.pushButton_10.setObjectName("pushButton_10")
         self.tabWidget.addTab(self.shell, "")
         self.horizontalLayout.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -98,12 +104,18 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "Выбрать файл"))
         self.pushButton_3.setText(_translate("MainWindow", "Добавить"))
+        self.pushButton_9.setText(_translate("MainWindow", "Сортировать"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.insert), _translate("MainWindow", "Insert Sort"))
-        self.pushButton_4.setText(_translate("MainWindow", "Добавить"))
         self.pushButton_2.setText(_translate("MainWindow", "Выбрать файл"))
+        self.pushButton_7.setText(_translate("MainWindow", "Добавить"))
+        self.pushButton_10.setText(_translate("MainWindow", "Сортировать"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.shell), _translate("MainWindow", "Shell Sort"))
         self.pushButton.clicked.connect(self.file_open)
         self.pushButton_2.clicked.connect(self.file_open2)
+        self.pushButton_3.clicked.connect(self.add1)
+        self.pushButton_9.clicked.connect(self.sort1)
+        self.pushButton_7.clicked.connect(self.add2)
+        self.pushButton_10.clicked.connect(self.sort2)
 
     def file_open(self):
         filename = QFileDialog.getOpenFileName()
@@ -148,22 +160,17 @@ class Ui_MainWindow(object):
         matrix = sorter.readArrayFromFile(path)
         rows = len(matrix)
         columns = len(matrix[0])
-        print(matrix)
-        print(rows, columns)
         header = self.tableWidget_3.horizontalHeader()
         self.tableWidget_3.setRowCount(rows)
         self.tableWidget_3.setColumnCount(columns)
         unsortedArray = []
         for i in range(0, rows):
             unsortedArray.append(matrix[i][0])
-        print(unsortedArray)
         sortedArray = sorter.shellSort(unsortedArray)
         shifts = sortedArray[len(sortedArray) - 1]
         sortedArray = sortedArray[:-1]
         steps = sortedArray[len(sortedArray) - 1]
         sortedArray = sortedArray[:-1]
-
-        print(sortedArray)
         for i in range(0, rows):
             for j in range(0, columns):
                 header.setSectionResizeMode(j, QtWidgets.QHeaderView.Stretch)
@@ -175,11 +182,69 @@ class Ui_MainWindow(object):
         self.textEdit_3.append(str("Количество перестановок: "))
         self.textEdit_3.append(str(shifts))
 
-    def newWindow(self):
-        self.winTable = Ui_MainWindow()
-        self.winTable.show()
+    def add1(self):
+        sorter = Sorter()
+        text = [self.lineEdit_2.text().split()]
+        columns = len(text[0])
+        counter = self.tableWidget_2.rowCount()
+        self.tableWidget_2.setRowCount(counter + 1)
+        self.tableWidget_2.setColumnCount(columns)
+        unsorted = []
+        columnsCounter = self.tableWidget_2.columnCount()
+        for i in range(0, columns):
+            self.tableWidget_2.setItem(counter, i, QTableWidgetItem(text[0][i]))
 
+    def add2(self):
+        text = [self.lineEdit.text().split()]
+        columns = len(text[0])
+        counter = self.tableWidget_4.rowCount()
+        self.tableWidget_4.setRowCount(counter + 1)
+        self.tableWidget_4.setColumnCount(columns)
+        for i in range(0, columns):
+            self.tableWidget_4.setItem(counter, i, QTableWidgetItem(text[0][i]))
 
+    def sort1(self):
+        sorter = Sorter()
+        rows = self.tableWidget_2.rowCount()
+        columns = self.tableWidget_2.columnCount()
+        unsorted = []
+        for i in range(0, rows):
+            unsorted.append(self.tableWidget_2.item(i, 0).text())
+
+        sorted = sorter.insertionSort(unsorted)
+        shifts = sorted[len(sorted) - 1]
+        sorted = sorted[:-1]
+        steps = sorted[len(sorted) - 1]
+        sorted = sorted[:-1]
+        self.tableWidget_2.sortItems(0, Qt.AscendingOrder)
+        self.textEdit_2.append(str("Отсортированный массив:"))
+        self.textEdit_2.append(str(sorted))
+        self.textEdit_2.append(str("Количество шагов:"))
+        self.textEdit_2.append(str(steps))
+        self.textEdit_2.append(str("Количество перестановок"))
+        self.textEdit_2.append(str(shifts))
+        print(sorted)
+
+    def sort2(self):
+        sorter = Sorter()
+        rows = self.tableWidget_4.rowCount()
+        unsorted = []
+        for i in range(0, rows):
+            unsorted.append(self.tableWidget_4.item(i, 0).text())
+
+        sorted = sorter.shellSort(unsorted)
+        shifts = sorted[len(sorted) - 1]
+        sorted = sorted[:-1]
+        steps = sorted[len(sorted) - 1]
+        sorted = sorted[:-1]
+        self.tableWidget_4.sortItems(0, Qt.AscendingOrder)
+        self.textEdit_4.append(str("Отсортированный массив:"))
+        self.textEdit_4.append(str(sorted))
+        self.textEdit_4.append(str("Количество шагов:"))
+        self.textEdit_4.append(str(steps))
+        self.textEdit_4.append(str("Количество перестановок"))
+        self.textEdit_4.append(str(shifts))
+        print(sorted)
 if __name__ == "__main__":
     import sys
 
