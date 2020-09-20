@@ -1,12 +1,10 @@
-from timeit import timeit
+import time
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QTextEdit, QFileDialog, QTableWidgetItem, QHeaderView
-import numpy as np
+from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem
+
 from src.sorter import Sorter
-import re
 
 
 class Ui_MainWindow(object):
@@ -124,22 +122,20 @@ class Ui_MainWindow(object):
         matrix = sorter.readArrayFromFile(path)
         rows = len(matrix)
         columns = len(matrix[0])
-        print(matrix)
-        print(rows, columns)
         header = self.tableWidget.horizontalHeader()
         self.tableWidget.setRowCount(rows)
         self.tableWidget.setColumnCount(columns)
         unsortedArray = []
         for i in range(0, rows):
             unsortedArray.append(matrix[i][0])
-        print(unsortedArray)
+        start_time = time.time()
         sortedArray = sorter.insertionSort(unsortedArray)
+        end_time = time.time() - start_time
         shifts = sortedArray[len(sortedArray) - 1]
         sortedArray = sortedArray[:-1]
         steps = sortedArray[len(sortedArray) - 1]
         sortedArray = sortedArray[:-1]
 
-        print(sortedArray)
         for i in range(0, rows):
             for j in range(0, columns):
                 header.setSectionResizeMode(j, QtWidgets.QHeaderView.Stretch)
@@ -150,6 +146,8 @@ class Ui_MainWindow(object):
         self.textEdit.append(str(steps))
         self.textEdit.append(str("Количество перестановок: "))
         self.textEdit.append(str(shifts))
+        self.textEdit.append(str("Затраченное время"))
+        self.textEdit.append(str("--- %s секунд ---" % (end_time)))
 
         return matrix
 
@@ -166,7 +164,9 @@ class Ui_MainWindow(object):
         unsortedArray = []
         for i in range(0, rows):
             unsortedArray.append(matrix[i][0])
+        start_time = time.time()
         sortedArray = sorter.shellSort(unsortedArray)
+        end_time = time.time() - start_time
         shifts = sortedArray[len(sortedArray) - 1]
         sortedArray = sortedArray[:-1]
         steps = sortedArray[len(sortedArray) - 1]
@@ -181,16 +181,15 @@ class Ui_MainWindow(object):
         self.textEdit_3.append(str(steps))
         self.textEdit_3.append(str("Количество перестановок: "))
         self.textEdit_3.append(str(shifts))
+        self.textEdit_3.append(str("Затраченное время"))
+        self.textEdit_3.append(str("--- %s секунд ---" % (end_time)))
 
     def add1(self):
-        sorter = Sorter()
         text = [self.lineEdit_2.text().split()]
         columns = len(text[0])
         counter = self.tableWidget_2.rowCount()
         self.tableWidget_2.setRowCount(counter + 1)
         self.tableWidget_2.setColumnCount(columns)
-        unsorted = []
-        columnsCounter = self.tableWidget_2.columnCount()
         for i in range(0, columns):
             self.tableWidget_2.setItem(counter, i, QTableWidgetItem(text[0][i]))
 
@@ -206,12 +205,12 @@ class Ui_MainWindow(object):
     def sort1(self):
         sorter = Sorter()
         rows = self.tableWidget_2.rowCount()
-        columns = self.tableWidget_2.columnCount()
         unsorted = []
         for i in range(0, rows):
             unsorted.append(self.tableWidget_2.item(i, 0).text())
-
+        start_time = time.time()
         sorted = sorter.insertionSort(unsorted)
+        end_time = time.time() - start_time
         shifts = sorted[len(sorted) - 1]
         sorted = sorted[:-1]
         steps = sorted[len(sorted) - 1]
@@ -223,7 +222,9 @@ class Ui_MainWindow(object):
         self.textEdit_2.append(str(steps))
         self.textEdit_2.append(str("Количество перестановок"))
         self.textEdit_2.append(str(shifts))
-        print(sorted)
+        self.textEdit_2.append(str("Затраченное время"))
+        self.textEdit_2.append(str("--- %s секунд ---" % (end_time)))
+
 
     def sort2(self):
         sorter = Sorter()
@@ -231,8 +232,9 @@ class Ui_MainWindow(object):
         unsorted = []
         for i in range(0, rows):
             unsorted.append(self.tableWidget_4.item(i, 0).text())
-
+        start_time = time.time()
         sorted = sorter.shellSort(unsorted)
+        end_time = time.time() - start_time
         shifts = sorted[len(sorted) - 1]
         sorted = sorted[:-1]
         steps = sorted[len(sorted) - 1]
@@ -244,7 +246,10 @@ class Ui_MainWindow(object):
         self.textEdit_4.append(str(steps))
         self.textEdit_4.append(str("Количество перестановок"))
         self.textEdit_4.append(str(shifts))
-        print(sorted)
+        self.textEdit_4.append(str("Затраченное время"))
+        self.textEdit_4.append(str("--- %s секунд ---" % (end_time)))
+
+
 if __name__ == "__main__":
     import sys
 
