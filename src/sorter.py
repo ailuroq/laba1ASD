@@ -16,7 +16,7 @@ class Sorter:
         array = [line.split() for line in file]
         return array
 
-    def insertionSort(self, array):
+    def insertionSort(self, array, model):
         counter = 0
         shift = 0
         for i in range(1, len(array)):
@@ -30,11 +30,12 @@ class Sorter:
             array[j + 1] = key
             counter += 1
         counter += 1
+
         array.insert(len(array), counter)
         array.insert(len(array), shift)
         return array
 
-    def shellSort(self, array):
+    def shellSort(self, array, model):
         inc = len(array) // 2
         counter = 0
         shift = 0

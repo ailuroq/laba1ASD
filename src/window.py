@@ -1,10 +1,9 @@
+import codecs
 import time
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem
-
-from src.sorter import Sorter
 
 
 class Ui_MainWindow(object):
@@ -118,8 +117,7 @@ class Ui_MainWindow(object):
     def file_open(self):
         filename = QFileDialog.getOpenFileName()
         path = filename[0]
-        sorter = Sorter()
-        matrix = sorter.readArrayFromFile(path)
+        matrix = self.readArrayFromFile(path)
         rows = len(matrix)
         columns = len(matrix[0])
         header = self.tableWidget.horizontalHeader()
@@ -129,7 +127,7 @@ class Ui_MainWindow(object):
         for i in range(0, rows):
             unsortedArray.append(matrix[i][0])
         start_time = time.time()
-        sortedArray = sorter.insertionSort(unsortedArray)
+        sortedArray = self.insertionSort(unsortedArray, self.textEdit)
         end_time = time.time() - start_time
         shifts = sortedArray[len(sortedArray) - 1]
         sortedArray = sortedArray[:-1]
@@ -154,8 +152,7 @@ class Ui_MainWindow(object):
     def file_open2(self):
         filename = QFileDialog.getOpenFileName()
         path = filename[0]
-        sorter = Sorter()
-        matrix = sorter.readArrayFromFile(path)
+        matrix = self.readArrayFromFile(path)
         rows = len(matrix)
         columns = len(matrix[0])
         header = self.tableWidget_3.horizontalHeader()
@@ -165,7 +162,7 @@ class Ui_MainWindow(object):
         for i in range(0, rows):
             unsortedArray.append(matrix[i][0])
         start_time = time.time()
-        sortedArray = sorter.shellSort(unsortedArray)
+        sortedArray = self.shellSort(unsortedArray, self.textEdit_3)
         end_time = time.time() - start_time
         shifts = sortedArray[len(sortedArray) - 1]
         sortedArray = sortedArray[:-1]
@@ -203,13 +200,12 @@ class Ui_MainWindow(object):
             self.tableWidget_4.setItem(counter, i, QTableWidgetItem(text[0][i]))
 
     def sort1(self):
-        sorter = Sorter()
         rows = self.tableWidget_2.rowCount()
         unsorted = []
         for i in range(0, rows):
             unsorted.append(self.tableWidget_2.item(i, 0).text())
         start_time = time.time()
-        sorted = sorter.insertionSort(unsorted)
+        sorted = self.insertionSort(unsorted, self.textEdit_2)
         end_time = time.time() - start_time
         shifts = sorted[len(sorted) - 1]
         sorted = sorted[:-1]
@@ -227,13 +223,12 @@ class Ui_MainWindow(object):
 
 
     def sort2(self):
-        sorter = Sorter()
         rows = self.tableWidget_4.rowCount()
         unsorted = []
         for i in range(0, rows):
             unsorted.append(self.tableWidget_4.item(i, 0).text())
         start_time = time.time()
-        sorted = sorter.shellSort(unsorted)
+        sorted = self.shellSort(unsorted, self.textEdit_4)
         end_time = time.time() - start_time
         shifts = sorted[len(sorted) - 1]
         sorted = sorted[:-1]
@@ -249,6 +244,49 @@ class Ui_MainWindow(object):
         self.textEdit_4.append(str("Затраченное время"))
         self.textEdit_4.append(str("--- %s секунд ---" % (end_time)))
 
+    def readArrayFromFile(self, fileName):
+        file = codecs.open(fileName, 'r')
+        array = [line.split() for line in file]
+        return array
+
+    def insertionSort(self, array, model):
+        counter = 0
+        shift = 0
+        for i in range(1, len(array)):
+            key = array[i]
+            j = i - 1
+            while j >= 0 and key < array[j]:
+                array[j + 1] = array[j]
+                j -= 1
+                counter += 1
+                shift += 1
+                model.append(str(array))
+            array[j + 1] = key
+            counter += 1
+        counter += 1
+        array.insert(len(array), counter)
+        array.insert(len(array), shift)
+        return array
+
+    def shellSort(self, array, model):
+        inc = len(array) // 2
+        counter = 0
+        shift = 0
+        while inc:
+            for i, el in enumerate(array):
+                while i >= inc and array[i - inc] > el:
+                    array[i] = array[i - inc]
+                    i -= inc
+                    counter += 1
+                    shift += 1
+                    model.append(str(array))
+                array[i] = el
+                counter += 1
+            inc = 1 if inc == 2 else int(inc * 5.0 / 11)
+            counter += 1
+        array.insert(len(array), counter)
+        array.insert(len(array), shift)
+        return array
 
 if __name__ == "__main__":
     import sys
