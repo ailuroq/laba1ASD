@@ -4,6 +4,7 @@ import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem
+from pip._vendor.msgpack.fallback import xrange
 
 
 class Ui_MainWindow(object):
@@ -29,6 +30,7 @@ class Ui_MainWindow(object):
         self.lineEdit_2 = QtWidgets.QLineEdit(self.insert)
         self.lineEdit_2.setGeometry(QtCore.QRect(0, 330, 521, 22))
         self.lineEdit_2.setObjectName("lineEdit_2")
+        self.lineEdit_2.setInputMask('A')
         self.tableWidget = QtWidgets.QTableWidget(self.insert)
         self.tableWidget.setEnabled(True)
         self.tableWidget.setGeometry(QtCore.QRect(1, 39, 519, 181))
@@ -63,6 +65,7 @@ class Ui_MainWindow(object):
         self.lineEdit = QtWidgets.QLineEdit(self.shell)
         self.lineEdit.setGeometry(QtCore.QRect(0, 330, 521, 22))
         self.lineEdit.setObjectName("lineEdit")
+        self.lineEdit.setInputMask('A')
         self.tableWidget_4 = QtWidgets.QTableWidget(self.shell)
         self.tableWidget_4.setGeometry(QtCore.QRect(0, 400, 519, 211))
         self.tableWidget_4.setObjectName("tableWidget_4")
@@ -221,7 +224,6 @@ class Ui_MainWindow(object):
         self.textEdit_2.append(str("Затраченное время"))
         self.textEdit_2.append(str("--- %s секунд ---" % (end_time)))
 
-
     def sort2(self):
         rows = self.tableWidget_4.rowCount()
         unsorted = []
@@ -252,18 +254,21 @@ class Ui_MainWindow(object):
     def insertionSort(self, array, model):
         counter = 0
         shift = 0
-        for i in range(1, len(array)):
-            key = array[i]
+        unsortedArray = array
+        model.append(str("Изначальный массив:"))
+        model.append(str(unsortedArray))
+        model.append(str("Сортировка:"))
+
+        for i in xrange(1, len(array)):
             j = i - 1
-            while j >= 0 and key < array[j]:
-                array[j + 1] = array[j]
+            value = array.pop(i)
+            model.append(str(array))
+            shift += 1
+            while (j >= 0) and (array[j] > value):
                 j -= 1
                 counter += 1
-                shift += 1
-                model.append(str(array))
-            array[j + 1] = key
+            array.insert(j + 1, value)
             counter += 1
-        counter += 1
         array.insert(len(array), counter)
         array.insert(len(array), shift)
         return array
@@ -272,21 +277,26 @@ class Ui_MainWindow(object):
         inc = len(array) // 2
         counter = 0
         shift = 0
+        unsortedArray = array
+        model.append(str("Изначальный массив:"))
+        model.append(str(unsortedArray))
+        model.append(str("Сортировка:"))
         while inc:
             for i, el in enumerate(array):
                 while i >= inc and array[i - inc] > el:
                     array[i] = array[i - inc]
                     i -= inc
                     counter += 1
-                    shift += 1
-                    model.append(str(array))
                 array[i] = el
                 counter += 1
+                model.append(str(array))
+                shift += 1
             inc = 1 if inc == 2 else int(inc * 5.0 / 11)
             counter += 1
         array.insert(len(array), counter)
         array.insert(len(array), shift)
         return array
+
 
 if __name__ == "__main__":
     import sys

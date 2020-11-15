@@ -1,15 +1,15 @@
-o n m
-n m l
-m l k
-l k j
-k j l
-j l h
-l h g
-h g f
-g f e
-f e d
-e d c
-d c b
-c b a
-b a z
-a b c
+g
+h
+t
+w
+r
+t
+q
+a
+c
+b
+s
+k
+i
+o
+p
